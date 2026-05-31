@@ -152,7 +152,7 @@ function ProductsPage() {
                   <button
                     key={c}
                     onClick={() => setActive(c)}
-                    className={`whitespace-nowrap rounded-full py-1 px-3 text-[11px] font-semibold transition-all ${
+                    className={`whitespace-nowrap rounded-full py-1 px-3 text-[11px] font-semibold transition-all duration-200 ease-out active:scale-95 ${
                       isActive
                         ? "bg-forest-gradient text-primary-foreground shadow-card"
                         : "bg-card text-forest-deep border border-border"
