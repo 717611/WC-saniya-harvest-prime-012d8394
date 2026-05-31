@@ -1,90 +1,64 @@
 ## Goal
-Add a self-contained "Kisan Saathi" guided chatbot widget mounted on `/products`, driven by a client-side state machine, reusing the existing product catalog and order-processing pipeline (no duplication, no LLM).
+Move the Kisan Saathi widget off the Products page onto the Home page, and add natural typing + staggered entrance animations inside the chat — without breaking the existing Order flow or modal.
 
-## Architecture
+## 1. Relocate widget to Home
 
-### Shared module extraction (to avoid duplication)
-Extract from `src/routes/products.tsx` into reusable modules:
+**`src/routes/products.tsx`**
+- Remove the `KisanSaathiWidget` import.
+- Remove `<KisanSaathiWidget onOrder={openOrder} />` from the returned JSX.
+- Keep `useOrderFlow()`, `{modal}`, and all `ProductCard` order wiring untouched (products grid still needs it).
 
-1. **`src/data/products-catalog.ts`** — move `Item`, `Variant`, `Category` types, the `items` array, all image imports, `WHATSAPP_NUMBER`, and the `formatINR` helper. Re-export and import back into `products.tsx`.
-2. **`src/components/order/OrderFlowModal.tsx`** — extract the existing modal (form → 3-step processing → success → WhatsApp handoff) into a controlled component with `(open, target, onClose)` props. Reuse in both `products.tsx` and the chatbot. The 3-second processing pipeline (Availability → Coverage → Reference ID) and the WhatsApp message format stay identical.
-3. **`src/hooks/useOrderFlow.ts`** — small hook exposing `{ orderTarget, openOrder, closeOrder, modalProps }` so any surface can trigger the identical flow.
+**`src/routes/index.tsx`**
+- Import `KisanSaathiWidget` and `useOrderFlow`.
+- Inside `Index`, call `const { openOrder, modal } = useOrderFlow();`.
+- Render `{modal}` and `<KisanSaathiWidget onOrder={openOrder} />` at the end of the returned fragment, so the order modal (form → 3-step processing → WhatsApp deep link) works seamlessly when a user taps "Order" from chat on the Home page.
+- No router/config/dep changes. Widget stays `fixed bottom-20 right-4 z-[90]` so it floats above the bottom nav on every page where it's mounted (Home only now).
 
-This guarantees the chatbot's "Order Now" routes through the exact same pipeline.
+## 2. Natural typing + staggered reveals (scoped to `KisanSaathiWidget.tsx`)
 
-### Chatbot widget
-New folder `src/components/kisan-saathi/`:
+Add two tiny presentational primitives inside the same file (no new files, no deps):
 
-```
-kisan-saathi/
-  KisanSaathiWidget.tsx     // main container + state machine + mount
-  FloatingBadge.tsx         // circular avatar + bouncing "Namaste" bubble
-  ChatShell.tsx             // glassmorphic card frame, header (avatar, back, X)
-  states/
-    MukhyaMenu.tsx          // State 0
-    FertilizerSalah.tsx     // State 1
-    BeejSalah.tsx           // State 2
-    BestProducts.tsx        // State 3 (Eco Root spotlight)
-    TalkToExpert.tsx        // State 4
-  types.ts                  // ChatState union
-```
+### a. `<TypingBubble text={...} onDone?={...} speed={18} />`
+- Replaces `ChatBubble` usage for assistant messages in `MukhyaMenu`, `ProductList`, `BestProducts`, and the "Finding expert…" line in `TalkToExpert`.
+- Internally uses `useState` + `useEffect` with `setInterval` to append characters at ~18ms/char (≈55 chars/sec — readable, not sluggish, not instant). Clears interval on unmount/re-trigger.
+- While typing, shows a soft caret (`▍` with `animate-pulse`) at the end.
+- Calls `onDone()` when complete so the parent can trigger the staggered reveal.
+- Supports rich content by accepting a plain string OR a small structured payload (string with optional bold segments via a `**text**` marker → rendered with `<b>`); used for the existing bold Hinglish phrases.
 
-Avatar asset: copy `user-uploads://1780256934556.png` → `src/assets/kisan-saathi-avatar.png` and import as ES6 module (the spec says `.jpg` but the actual upload is `.png`).
+### b. `<Stagger delayStart={0} step={70}>{children}</Stagger>`
+- Wraps a list of items. Each direct child gets an inline `style={{ animationDelay: ... }}` and the classes `animate-in fade-in slide-in-from-bottom-2 duration-200 ease-out fill-mode-both`.
+- Cascade step: 70ms per item (within the requested 50–100ms range).
+- Used for:
+  - The 4 menu pills in `MukhyaMenu`.
+  - The `MiniProductRow` cards in `ProductList`.
+  - The Eco Root card under the Hinglish description in `BestProducts`.
 
-### State machine
-Single `useState<ChatState>` in `KisanSaathiWidget`:
-```ts
-type ChatState = "menu" | "fertilizer" | "beej" | "best" | "expert";
-```
-- Header shows back arrow whenever `state !== "menu"`.
-- Each state renders pill-style action buttons; no text input field anywhere.
-- `active:scale-95 duration-100 ease-out` on every tile.
+### Wiring per state
+- `MukhyaMenu`: render `<TypingBubble>` first, hold the pills hidden until `onDone`, then mount the `<Stagger>` of buttons. Use a local `useState<boolean>('revealed')` reset on state entry.
+- `ProductList`: same pattern — typing line "Yeh rahe humare top recommendations 👇", then staggered product rows.
+- `BestProducts`: typing line with the Eco Root description, then a single staggered card (still benefits from the fade/slide entrance for consistency).
+- `TalkToExpert`: animate the "Finding our kisaan sathi expert…" text via `TypingBubble`-style typing; once `connected` flips, the existing zoom-in success block already has an entrance animation — keep it.
 
-### Data wiring
-- **Fertilizer state**: `items.filter(i => i.category === "Fertilizers")`.
-- **Beej state**: `items.filter(i => i.category === "Seeds")`.
-- **Best Products state**: `items.find(i => i.name === "Eco Root")` with the Hinglish summary card and variant selector reusing the same variant logic.
-- All "Order Now" buttons call `openOrder(item, variant)` from the shared hook, which mounts the same modal over the chatbot.
+### Reset behavior
+- The `KisanSaathiWidget` already remounts state children on every `state` change. Keying each state subtree by `state` (`<div key={state}>` wrapper) guarantees typing + stagger restart cleanly when the user navigates back and forth.
 
-### Talk to Expert flow
-Local `useState` for animation phase:
-- 0–1.5s: pulsing `Phone` icon + "Finding our kisaan sathi expert..."
-- 1.5s+: `CheckCircle2` + "हमारे एक्सपर्ट बात करने के लिए उपलब्ध हैं।"
-- Primary CTA `<a href="tel:8852003393">` + secondary "Back to menu" button.
-
-## Positioning & styling
-
-- Widget root: `fixed bottom-20 right-4 z-50` (above the sticky `BottomNav` which typically sits at `bottom-0` h≈64px → 80px clearance).
-- **Floating badge**: 56px circular `img` clipped with `rounded-full ring-2 ring-emerald shadow-elegant`. Pop-up bubble absolutely positioned above it (`-top-10`) with `animate-bounce` and a tail.
-- **Chat panel**: `w-[360px] max-w-[90vw] max-h-[60vh]` with `bg-white/95 backdrop-blur-md border border-stone-200/80 rounded-3xl shadow-elegant flex flex-col`. Header (sticky) + scrollable body (`overflow-y-auto`). No footer input.
-- Open/close: badge ↔ panel mutually exclusive via local boolean `isOpen`.
-- Tailwind animations only (`animate-in fade-in zoom-in-95`, `animate-bounce`). Zero new deps.
-
-## Mount point
-At the end of the returned fragment in `ProductsPage` (`src/routes/products.tsx`), after the `OrderFlowModal`, mount `<KisanSaathiWidget />`. The widget owns its own `useOrderFlow` instance or — cleaner — receives `onOrder` as a prop so a single modal instance services both surfaces. **Chosen approach**: lift `useOrderFlow` into `ProductsPage`, pass `openOrder` to both `ProductCard` and `KisanSaathiWidget`, render one `<OrderFlowModal {...modalProps} />`.
+### Performance
+- Pure CSS transforms / opacity (`animate-in fade-in slide-in-from-bottom-2`) → GPU-accelerated.
+- Typing uses one `setInterval` per active bubble, cleared on unmount. Negligible CPU.
+- No new dependencies.
 
 ## Files touched
 
-Created:
-- `src/data/products-catalog.ts`
-- `src/components/order/OrderFlowModal.tsx`
-- `src/hooks/useOrderFlow.ts`
-- `src/components/kisan-saathi/KisanSaathiWidget.tsx`
-- `src/components/kisan-saathi/FloatingBadge.tsx`
-- `src/components/kisan-saathi/ChatShell.tsx`
-- `src/components/kisan-saathi/states/{MukhyaMenu,FertilizerSalah,BeejSalah,BestProducts,TalkToExpert}.tsx`
-- `src/components/kisan-saathi/types.ts`
-- `src/assets/kisan-saathi-avatar.png` (copied)
+Edited only:
+- `src/routes/products.tsx` — remove widget mount + import.
+- `src/routes/index.tsx` — mount widget + order modal.
+- `src/components/kisan-saathi/KisanSaathiWidget.tsx` — add `TypingBubble` + `Stagger`, rewire menu/product/best/expert states, key state subtree.
 
-Edited:
-- `src/routes/products.tsx` — replace inline `items`/types/`formatINR`/`WHATSAPP_NUMBER` and modal JSX with imports + extracted components; mount widget.
-
-No router, config, dep, or other route changes.
+No new files, no config, no dependency, no router changes. Existing `useOrderFlow` hook, `OrderFlowModal` JSX, WhatsApp number, ref-ID generation, and Products page behaviour all unchanged.
 
 ## Acceptance
-- Badge sits above bottom nav on mobile 728×496, never overlaps it.
-- Tapping badge opens a 360px / max-60vh glassmorphic panel; back/X work; no text input is visible.
-- Each state pulls live data from the shared catalog (changing a price in `items` updates both grid and chatbot).
-- "Order Now" from any chatbot card triggers the identical 3-step processing animation, generates `SAS-2026-####`, and opens the same WhatsApp deep link to `919413050436`.
-- Talk-to-Expert animation hits the dialer at `tel:8852003393`.
-- Type-check clean; products page renders unchanged visually aside from the new floating widget.
+- Home page (`/`) shows the floating badge above the bottom nav; Products page no longer shows it.
+- Tapping the badge opens chat; assistant text types in smoothly (~55 chars/sec) with a blinking caret; option pills / product rows cascade in 70ms apart immediately after.
+- Navigating between states restarts the typing + stagger every time.
+- Tapping "Order" inside chat from `/` opens the same 3-step `OrderFlowModal` and produces the identical WhatsApp deep link.
+- Type-check clean; no visual regressions on Products page.

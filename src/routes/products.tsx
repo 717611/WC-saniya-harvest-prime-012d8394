@@ -22,7 +22,7 @@ import {
   type Variant,
 } from "@/data/products-catalog";
 import { useOrderFlow } from "@/hooks/useOrderFlow";
-import { KisanSaathiWidget } from "@/components/kisan-saathi/KisanSaathiWidget";
+
 
 export const Route = createFileRoute("/products")({
   component: ProductsPage,
@@ -289,8 +289,7 @@ function ProductsPage() {
       </section>
 
       {modal}
-
-      <KisanSaathiWidget onOrder={openOrder} />
     </>
+
   );
 }
