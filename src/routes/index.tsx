@@ -33,6 +33,7 @@ const organizationSchema = {
 };
 
 function Index() {
+  const { openOrder, modal } = useOrderFlow();
   return (
     <>
       <Helmet>
@@ -51,6 +52,8 @@ function Index() {
       <WhyChooseUs />
       <Testimonials />
       <FinalCta />
+      {modal}
+      <KisanSaathiWidget onOrder={openOrder} />
     </>
   );
 }
