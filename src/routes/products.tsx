@@ -197,12 +197,102 @@ const trustBar = [
   { icon: Award, label: "Premium", sub: "Quality" },
 ];
 
+type OrderTarget = {
+  product: Item;
+  variant?: Variant;
+  price: number;
+  priceLabel: string;
+};
+
+type OrderStage = "form" | "processing" | "success";
+
 function ProductsPage() {
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   const [active, setActive] = useState<Category>("All");
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<Record<string, boolean>>({});
+
+  const [orderTarget, setOrderTarget] = useState<OrderTarget | null>(null);
+  const [stage, setStage] = useState<OrderStage>("form");
+  const [custName, setCustName] = useState("");
+  const [custPhone, setCustPhone] = useState("");
+  const [nameErr, setNameErr] = useState("");
+  const [phoneErr, setPhoneErr] = useState("");
+  const [refId, setRefId] = useState("");
+  const [processingStep, setProcessingStep] = useState(0);
+
+  const openOrder = (p: Item, variant?: Variant) => {
+    const numericPrice = variant
+      ? variant.price
+      : Number(p.price.replace(/[^\d]/g, "")) || 0;
+    setOrderTarget({
+      product: p,
+      variant,
+      price: numericPrice,
+      priceLabel: variant ? formatINR(variant.price) : p.price,
+    });
+    setStage("form");
+    setCustName("");
+    setCustPhone("");
+    setNameErr("");
+    setPhoneErr("");
+    setProcessingStep(0);
+  };
+
+  const closeOrder = () => setOrderTarget(null);
+
+  const submitForm = () => {
+    const name = custName.trim();
+    const phone = custPhone.trim();
+    let ok = true;
+    if (name.length < 2) {
+      setNameErr("Please enter your full name");
+      ok = false;
+    } else setNameErr("");
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      setPhoneErr("Enter a valid 10-digit Indian mobile number");
+      ok = false;
+    } else setPhoneErr("");
+    if (!ok) return;
+    setStage("processing");
+  };
+
+  useEffect(() => {
+    if (stage !== "processing") return;
+    setProcessingStep(0);
+    const t1 = setTimeout(() => setProcessingStep(1), 1000);
+    const t2 = setTimeout(() => setProcessingStep(2), 2000);
+    const t3 = setTimeout(() => {
+      const id = Math.floor(1000 + Math.random() * 9000);
+      setRefId(`SAS-2026-${id}`);
+      setStage("success");
+    }, 3000);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [stage]);
+
+  const productLabel = orderTarget
+    ? `${orderTarget.product.name}${orderTarget.variant ? ` (${orderTarget.variant.label})` : ""}`
+    : "";
+
+  const whatsappHref = useMemo(() => {
+    if (!orderTarget) return "#";
+    const message = [
+      "Hello Saniya Agricultural Solutions,",
+      "I would like to place an order.",
+      `Reference Number: ${refId}`,
+      `Product: ${productLabel}`,
+      `Customer Name: ${custName.trim()}`,
+      `Mobile Number: ${custPhone.trim()}`,
+      "Please assist me with completing my order.",
+    ].join("\n");
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  }, [orderTarget, refId, productLabel, custName, custPhone]);
+
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
