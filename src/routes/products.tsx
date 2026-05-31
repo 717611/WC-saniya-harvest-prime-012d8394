@@ -1,7 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
 import { useMemo, useState } from "react";
-import { ShoppingCart } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  Truck,
+  Leaf,
+  Users,
+  Award,
+  Heart,
+  Plus,
+  Flame,
+} from "lucide-react";
+import heroBanner from "@/assets/products-hero-banner.jpg";
+import ecoRootPromo from "@/assets/eco-root-promo.jpg";
 import ecoRoot from "@/assets/product-eco-root.png";
 import yugm from "@/assets/product-yugm.png";
 import rajSeeds from "@/assets/product-raj-seeds.png";
@@ -14,34 +26,75 @@ export const Route = createFileRoute("/products")({
   component: ProductsPage,
 });
 
-type Category = "All" | "Fertilizers" | "Manures" | "Seeds" | "Adjuvants";
+type Category =
+  | "All"
+  | "Fertilizers"
+  | "Manures"
+  | "Seeds"
+  | "Phosphorus"
+  | "Best Sellers";
 
 type Item = {
   name: string;
-  category: Exclude<Category, "All">;
+  category: Exclude<Category, "All" | "Best Sellers">;
   image: string;
   tagline: string;
+  price: string;
+  bestSeller?: boolean;
 };
 
 const items: Item[] = [
-  { name: "Eco Root", category: "Fertilizers", image: ecoRoot, tagline: "Humic acid soil conditioner" },
-  { name: "Eco Green", category: "Fertilizers", image: ecoGreen, tagline: "Liquid organic booster" },
-  { name: "Eco Granule", category: "Fertilizers", image: ecoGranule, tagline: "Granular crop nutrition" },
-  { name: "Uttam Fasal", category: "Fertilizers", image: uttamFasal, tagline: "Humic + seaweed granules" },
-  { name: "युग्म मोर प्रोम", category: "Manures", image: yugm, tagline: "Phosphate rich organic manure" },
-  { name: "RAJ Organic Seeds R-46", category: "Seeds", image: rajSeeds, tagline: "Improved mustard seed" },
-  { name: "Silk", category: "Adjuvants", image: silk, tagline: "Trisiloxane spread adjuvant" },
+  {
+    name: "Eco Root",
+    category: "Fertilizers",
+    image: ecoRoot,
+    tagline: "Humic Acid 98%",
+    price: "₹1000",
+    bestSeller: true,
+  },
+  { name: "Eco Green", category: "Fertilizers", image: ecoGreen, tagline: "Liquid organic booster", price: "₹650" },
+  { name: "Eco Granule", category: "Fertilizers", image: ecoGranule, tagline: "Granular crop nutrition", price: "₹550" },
+  { name: "Uttam Fasal", category: "Fertilizers", image: uttamFasal, tagline: "Humic + seaweed granules", price: "₹480" },
+  { name: "युग्म मोर प्रोम", category: "Phosphorus", image: yugm, tagline: "Phosphate rich organic manure", price: "₹1600", bestSeller: true },
+  { name: "RAJ Organic Seeds R-46", category: "Seeds", image: rajSeeds, tagline: "Improved mustard seed", price: "₹420" },
+  { name: "Silk", category: "Manures", image: silk, tagline: "Trisiloxane spread adjuvant", price: "₹380" },
 ];
 
-const categories: Category[] = ["All", "Fertilizers", "Manures", "Seeds", "Adjuvants"];
+const categories: Category[] = [
+  "All",
+  "Fertilizers",
+  "Manures",
+  "Seeds",
+  "Phosphorus",
+  "Best Sellers",
+];
+
+const trustBar = [
+  { icon: Truck, label: "Pan India", sub: "Delivery" },
+  { icon: Leaf, label: "100%", sub: "Organic" },
+  { icon: Users, label: "Farmer", sub: "Trusted" },
+  { icon: Award, label: "Premium", sub: "Quality" },
+];
 
 function ProductsPage() {
   const [active, setActive] = useState<Category>("All");
+  const [query, setQuery] = useState("");
+  const [saved, setSaved] = useState<Record<string, boolean>>({});
 
-  const filtered = useMemo(
-    () => (active === "All" ? items : items.filter((i) => i.category === active)),
-    [active],
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((i) => {
+      const matchesCat =
+        active === "All"
+          ? true
+          : active === "Best Sellers"
+            ? !!i.bestSeller
+            : i.category === active;
+      const matchesQ =
+        !q || i.name.toLowerCase().includes(q) || i.tagline.toLowerCase().includes(q);
+      return matchesCat && matchesQ;
+    });
+  }, [active, query]);
 
   return (
     <>
@@ -53,75 +106,166 @@ function ProductsPage() {
         />
         <link rel="canonical" href="https://saniya-harvest.vercel.app/products" />
       </Helmet>
-      <section className="pt-24 md:pt-28 pb-16 bg-secondary/40 min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <p className="text-xs font-bold tracking-[0.25em] text-emerald uppercase">Shop</p>
-          <h1 className="mt-2 font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-forest-deep">
-            Our Products
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            Premium organic agricultural solutions delivered Pan-India.
-          </p>
-        </div>
 
-        {/* Category chips */}
-        <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2 w-max mx-auto pb-2">
-            {categories.map((c) => {
-              const isActive = c === active;
+      <section className="pt-16 md:pt-24 pb-16 bg-secondary/40 min-h-screen">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          {/* 1. Hero Header Banner */}
+          <div className="relative rounded-2xl overflow-hidden shadow-elegant">
+            <img
+              src={heroBanner}
+              alt="Saniya Agriculture Solution — Best Quality Fertilizers, Manures, Seeds & Phosphorus delivered Pan India"
+              className="w-full h-[14vh] min-h-[96px] md:h-[28vh] md:min-h-[200px] object-cover"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+
+          {/* 2. Glassmorphic Floating Search */}
+          <div className="relative -mt-5 mx-3 z-10">
+            <div className="flex items-center gap-2 h-10 pl-3 pr-1 rounded-full backdrop-blur-md bg-white/80 border border-white/60 shadow-elegant">
+              <Search className="size-4 text-forest-deep/70 shrink-0" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search fertilizers, seeds, manures…"
+                className="flex-1 bg-transparent text-[13px] placeholder:text-muted-foreground focus:outline-none"
+              />
+              <button
+                aria-label="Filter"
+                className="size-8 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-card"
+              >
+                <SlidersHorizontal className="size-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* 3. Category Chips */}
+          <div className="mt-4 -mx-3 px-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 w-max">
+              {categories.map((c) => {
+                const isActive = c === active;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setActive(c)}
+                    className={`whitespace-nowrap rounded-full py-1 px-3 text-[11px] font-semibold transition-all ${
+                      isActive
+                        ? "bg-forest-gradient text-primary-foreground shadow-card"
+                        : "bg-card text-forest-deep border border-border"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 4. Trust Bar */}
+          <div className="mt-3 flex items-stretch justify-between rounded-xl bg-card border border-border px-2 py-2">
+            {trustBar.map((t, i) => (
+              <div
+                key={t.label}
+                className={`flex-1 flex flex-col items-center text-center gap-0.5 leading-tight ${
+                  i < trustBar.length - 1 ? "border-r border-border/60" : ""
+                }`}
+              >
+                <t.icon className="size-3.5 text-emerald" />
+                <div className="text-[10px] font-bold text-forest-deep">{t.label}</div>
+                <div className="text-[9px] text-muted-foreground">{t.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* 5. Eco Root Focus Banner */}
+          <a
+            href="tel:+918852003393"
+            className="mt-3 block rounded-2xl overflow-hidden shadow-card hover:shadow-elegant transition-shadow"
+          >
+            <img
+              src={ecoRootPromo}
+              alt="Eco Root Humic Acid 98% — Best Seller. Improves root development, nutrient uptake & soil health."
+              className="w-full h-[10vh] min-h-[72px] md:h-[22vh] md:min-h-[180px] object-cover"
+              loading="eager"
+              decoding="async"
+            />
+          </a>
+
+          {/* 6. Product Grid */}
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+            {filtered.map((p) => {
+              const isSaved = !!saved[p.name];
               return (
-                <button
-                  key={c}
-                  onClick={() => setActive(c)}
-                  className={`whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-                    isActive
-                      ? "bg-forest-gradient text-primary-foreground shadow-card"
-                      : "bg-card text-forest-deep border border-border hover:border-forest"
-                  }`}
+                <article
+                  key={p.name}
+                  className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col"
                 >
-                  {c}
-                </button>
+                  {/* Bookmark */}
+                  <button
+                    aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
+                    onClick={() => setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))}
+                    className="absolute top-2 right-2 z-10 size-7 grid place-items-center rounded-full bg-white/85 backdrop-blur-sm border border-border shadow-sm"
+                  >
+                    <Heart
+                      className={`size-3.5 transition-colors ${
+                        isSaved ? "fill-emerald text-emerald" : "text-forest-deep/70"
+                      }`}
+                    />
+                  </button>
+
+                  {/* Best Seller pill */}
+                  {p.bestSeller && (
+                    <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-gold/90 text-forest-deep px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-sm">
+                      <Flame className="size-2.5" /> Best
+                    </span>
+                  )}
+
+                  {/* Image well */}
+                  <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-3">
+                    <img
+                      src={p.image}
+                      alt={`${p.name} — ${p.tagline}`}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+
+                  {/* Info */}
+                  <div className="relative p-2.5 flex flex-col gap-0.5">
+                    <p className="text-[9px] uppercase tracking-wider text-emerald font-bold">
+                      {p.category}
+                    </p>
+                    <h3 className="font-display font-bold text-forest-deep text-[13px] leading-tight line-clamp-1">
+                      {p.name}
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground line-clamp-1">
+                      {p.tagline}
+                    </p>
+                    <div className="mt-1 flex items-end justify-between">
+                      <span className="font-display font-bold text-forest-deep text-base">
+                        {p.price}
+                      </span>
+                      <a
+                        href="tel:+918852003393"
+                        aria-label={`Add ${p.name}`}
+                        className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all"
+                      >
+                        <Plus className="size-4" />
+                      </a>
+                    </div>
+                  </div>
+                </article>
               );
             })}
           </div>
-        </div>
 
-        {/* Product grid */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {filtered.map((p) => (
-            <article
-              key={p.name}
-              className="group bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col"
-            >
-              <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-4">
-                <img
-                  src={p.image}
-                  alt={`${p.name} — ${p.tagline}`}
-                  loading="lazy"
-                  className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-4 flex flex-col gap-2 flex-1">
-                <h3 className="font-display font-bold text-forest-deep text-sm sm:text-base leading-tight">
-                  {p.name}
-                </h3>
-                <p className="text-[11px] uppercase tracking-wider text-emerald font-semibold">
-                  {p.category}
-                </p>
-                <p className="text-xs text-muted-foreground line-clamp-2">{p.tagline}</p>
-                <a
-                  href="tel:+918852003393"
-                  className="mt-auto inline-flex items-center justify-center gap-2 bg-forest-gradient text-primary-foreground rounded-full py-2.5 px-4 text-sm font-semibold shadow-card hover:shadow-elegant transition-all"
-                >
-                  <ShoppingCart className="size-4" /> View / Add
-                </a>
-              </div>
-            </article>
-          ))}
+          {filtered.length === 0 && (
+            <p className="mt-10 text-center text-sm text-muted-foreground">
+              No products match your search.
+            </p>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
