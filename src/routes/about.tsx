@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Quote, MapPin, Sprout, ShieldCheck } from "lucide-react";
 import founder from "@/assets/ak-singhal-portrait.png";
 
@@ -8,11 +8,16 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  useEffect(() => {
-    document.title = "About — Saniya Agriculture Solution";
-  }, []);
-
   return (
+    <>
+      <Helmet>
+        <title>About Us | Saniya Agriculture Solution</title>
+        <meta
+          name="description"
+          content="Led by C.M.D. A.K. Singhal, Saniya Agriculture Solution is committed to providing top-tier agricultural products and services for the betterment of farmers."
+        />
+        <link rel="canonical" href="https://saniya-harvest.vercel.app/about" />
+      </Helmet>
     <div className="pt-24 md:pt-28 pb-16 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}

@@ -42,7 +42,6 @@ function Index() {
         <link rel="canonical" href="https://saniya-harvest.vercel.app/" />
         <script type="application/ld+json">{JSON.stringify(organizationSchema)}</script>
       </Helmet>
-      <>
       <Hero />
       <StatsStrip />
       <WhatWeDo />
