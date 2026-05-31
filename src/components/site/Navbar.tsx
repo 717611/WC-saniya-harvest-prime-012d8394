@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { Phone, Menu, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import logo from "@/assets/saniya-logo-full.png";
 
-const links = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Products", href: "#products" },
-  { label: "Benefits", href: "#benefits" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Contact", href: "#contact" },
+type NavLink =
+  | { label: string; to: string; kind: "route" }
+  | { label: string; href: string; kind: "anchor" };
+
+const links: NavLink[] = [
+  { label: "Home", to: "/", kind: "route" },
+  { label: "About", to: "/about", kind: "route" },
+  { label: "Products", to: "/products", kind: "route" },
+  { label: "Benefits", href: "/#benefits", kind: "anchor" },
+  { label: "Reviews", href: "/#reviews", kind: "anchor" },
+  { label: "Contact", href: "/#contact", kind: "anchor" },
 ];
 
 export function Navbar() {
@@ -29,7 +34,7 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <span className="size-11 lg:size-12 rounded-full bg-white shadow-soft ring-1 ring-forest/15 grid place-items-center overflow-hidden">
             <img
               src={logo}
@@ -44,19 +49,31 @@ export function Navbar() {
               Solution
             </span>
           </span>
-        </a>
+        </Link>
 
         <ul className="hidden lg:flex items-center gap-8">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="text-sm font-medium text-foreground/80 hover:text-forest transition-colors relative after:absolute after:left-0 after:-bottom-1.5 after:h-0.5 after:w-0 after:bg-forest hover:after:w-full after:transition-all"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
+          {links.map((l) =>
+            l.kind === "route" ? (
+              <li key={l.label}>
+                <Link
+                  to={l.to}
+                  activeOptions={{ exact: l.to === "/" }}
+                  className="text-sm font-medium text-foreground/80 hover:text-forest transition-colors data-[status=active]:text-forest data-[status=active]:font-semibold"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ) : (
+              <li key={l.label}>
+                <a
+                  href={l.href}
+                  className="text-sm font-medium text-foreground/80 hover:text-forest transition-colors"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ),
+          )}
         </ul>
 
         <a
@@ -85,14 +102,24 @@ export function Navbar() {
         <div className="lg:hidden bg-background/95 backdrop-blur-lg border-t border-border animate-fade-in">
           <ul className="px-6 py-4 flex flex-col gap-1">
             {links.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="block py-2.5 text-foreground/90 font-medium"
-                >
-                  {l.label}
-                </a>
+              <li key={l.label}>
+                {l.kind === "route" ? (
+                  <Link
+                    to={l.to}
+                    onClick={() => setOpen(false)}
+                    className="block py-2.5 text-foreground/90 font-medium"
+                  >
+                    {l.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="block py-2.5 text-foreground/90 font-medium"
+                  >
+                    {l.label}
+                  </a>
+                )}
               </li>
             ))}
             <a
