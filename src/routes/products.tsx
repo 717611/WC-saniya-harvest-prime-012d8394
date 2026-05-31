@@ -416,9 +416,11 @@ function ProductsPage() {
                 onToggleSave={() =>
                   setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))
                 }
+                onOrder={openOrder}
               />
             ))}
           </div>
+
 
           {filtered.length === 0 && (
             <p className="mt-10 text-center text-sm text-muted-foreground">
