@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Navbar } from "@/components/site/Navbar";
 import { Hero } from "@/components/site/Hero";
 import { StatsStrip } from "@/components/site/StatsStrip";
 import { WhatWeDo } from "@/components/site/WhatWeDo";
@@ -8,7 +7,6 @@ import { Products } from "@/components/site/Products";
 import { WhyChooseUs } from "@/components/site/WhyChooseUs";
 import { Testimonials } from "@/components/site/Testimonials";
 import { FinalCta } from "@/components/site/FinalCta";
-import { Footer } from "@/components/site/Footer";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -20,8 +18,7 @@ function Index() {
   }, []);
 
   return (
-    <main>
-      <Navbar />
+    <>
       <Hero />
       <StatsStrip />
       <WhatWeDo />
@@ -29,7 +26,6 @@ function Index() {
       <WhyChooseUs />
       <Testimonials />
       <FinalCta />
-      <Footer />
-    </main>
+    </>
   );
 }

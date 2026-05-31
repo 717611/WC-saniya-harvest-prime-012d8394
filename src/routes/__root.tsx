@@ -5,6 +5,22 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
+import { Navbar } from "@/components/site/Navbar";
+import { Footer } from "@/components/site/Footer";
+import { BottomNav } from "@/components/site/BottomNav";
+
+function Layout() {
+  return (
+    <>
+      <Navbar />
+      <main className="pb-28 md:pb-0">
+        <Outlet />
+      </main>
+      <Footer />
+      <BottomNav />
+    </>
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -31,7 +47,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -64,7 +79,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  component: () => <Outlet />,
+  component: Layout,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
