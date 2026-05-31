@@ -134,11 +134,11 @@ function ChatBubble({ children }: { children: React.ReactNode }) {
 }
 
 function MukhyaMenu({ onPick }: { onPick: (s: ChatState) => void }) {
-  const options: { key: ChatState; icon: React.ElementType; label: string }[] = [
-    { key: "fertilizer", icon: Sprout, label: "🌾 Fertilizer (खाद) salah" },
-    { key: "beej", icon: Wheat, label: "🌱 Beej salah" },
-    { key: "best", icon: Star, label: "🌟 Best Products" },
-    { key: "expert", icon: MessageCircle, label: "📞 Talk to Expert" },
+  const options: { key: ChatState; label: string }[] = [
+    { key: "fertilizer", label: "🌾 Fertilizer (खाद) salah" },
+    { key: "beej", label: "🌱 Beej salah" },
+    { key: "best", label: "🌟 Best Products" },
+    { key: "expert", label: "📞 Talk to Expert" },
   ];
   return (
     <>
