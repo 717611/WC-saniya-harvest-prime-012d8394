@@ -1,38 +1,90 @@
-
 ## Goal
-Redesign `src/routes/products.tsx` into a premium mobile-first shopping experience. All work isolated to this single route file plus two new image assets.
+Add a self-contained "Kisan Saathi" guided chatbot widget mounted on `/products`, driven by a client-side state machine, reusing the existing product catalog and order-processing pipeline (no duplication, no LLM).
 
-## New assets
-- `src/assets/products-hero-banner.jpg` — copied from `IMG_20260531_213811.png`
-- `src/assets/eco-root-promo.jpg` — copied from `file_0000000090607206a1af6986bbd6ad40.png`
+## Architecture
 
-## Viewport & spacing rules (revised)
-- Section top padding: `pt-16` on mobile (compressed from pt-20), `md:pt-24`
-- Hero Header Banner: `h-[14vh] min-h-[96px]`
-- Eco Root Focus Banner: `h-[10vh] min-h-[72px]`
-- Category chips: `py-1 px-3 text-[11px]`
-- Trust Bar: tight `flex` row of 4 columns, each `flex-col items-center text-[10px] leading-tight gap-0.5`, ~h-12
-- Search bar: compact `h-10`, overlaps banner via `-mt-5`
-- Target: header stack (banner + search + chips + trust + promo) < 38vh so 2nd grid row peeks above fold on standard mobile
+### Shared module extraction (to avoid duplication)
+Extract from `src/routes/products.tsx` into reusable modules:
 
-## Page structure (top-down)
+1. **`src/data/products-catalog.ts`** — move `Item`, `Variant`, `Category` types, the `items` array, all image imports, `WHATSAPP_NUMBER`, and the `formatINR` helper. Re-export and import back into `products.tsx`.
+2. **`src/components/order/OrderFlowModal.tsx`** — extract the existing modal (form → 3-step processing → success → WhatsApp handoff) into a controlled component with `(open, target, onClose)` props. Reuse in both `products.tsx` and the chatbot. The 3-second processing pipeline (Availability → Coverage → Reference ID) and the WhatsApp message format stay identical.
+3. **`src/hooks/useOrderFlow.ts`** — small hook exposing `{ orderTarget, openOrder, closeOrder, modalProps }` so any surface can trigger the identical flow.
 
-1. **Hero Header Banner** — `<img>` of `products-hero-banner.jpg`, `w-full h-[14vh] min-h-[96px] object-cover rounded-2xl`.
-2. **Glassmorphic Floating Search** — `-mt-5 mx-3 backdrop-blur-md bg-white/80 border border-white/60 shadow-elegant rounded-full h-10`, lucide Search icon left, integrated gradient filter button right. Wired to `query` state filtering by name/tagline.
-3. **Category Chips** — horizontal scroll. Options: All, Fertilizers, Manures, Seeds, Phosphorus, Best Sellers. `py-1 px-3 text-[11px]`. Active = `bg-forest-gradient text-primary-foreground`.
-4. **Trust Bar** — 4 columns (Truck/Leaf/Users/Award + micro-copy: Pan India Delivery, 100% Organic, Farmer Trusted, Premium Quality). `text-[10px] leading-tight`, no card chrome.
-5. **Eco Root Focus Banner** — `<img>` of `eco-root-promo.jpg` inside `rounded-2xl overflow-hidden h-[10vh] min-h-[72px] object-cover`. Wrapped in `<a href="tel:+918852003393">`.
-6. **Product Grid** — 2-col mobile / 3 md / 4 lg. `aspect-square` image well, `p-2.5`. Heart bookmark top-right (local toggle state). Gold "Best Seller" pill on Eco Root. Bold price line + category sub-label. Floating gradient `+` button bottom-right replaces full-width CTA.
+This guarantees the chatbot's "Order Now" routes through the exact same pipeline.
 
-## Helmet
-Keep existing `<Helmet>` unchanged.
+### Chatbot widget
+New folder `src/components/kisan-saathi/`:
 
-## Safety
-- Only `src/routes/products.tsx` edited; 2 new assets added
-- No dep / router / vite / package.json changes
-- Standard Tailwind v4 utilities only
+```
+kisan-saathi/
+  KisanSaathiWidget.tsx     // main container + state machine + mount
+  FloatingBadge.tsx         // circular avatar + bouncing "Namaste" bubble
+  ChatShell.tsx             // glassmorphic card frame, header (avatar, back, X)
+  states/
+    MukhyaMenu.tsx          // State 0
+    FertilizerSalah.tsx     // State 1
+    BeejSalah.tsx           // State 2
+    BestProducts.tsx        // State 3 (Eco Root spotlight)
+    TalkToExpert.tsx        // State 4
+  types.ts                  // ChatState union
+```
+
+Avatar asset: copy `user-uploads://1780256934556.png` → `src/assets/kisan-saathi-avatar.png` and import as ES6 module (the spec says `.jpg` but the actual upload is `.png`).
+
+### State machine
+Single `useState<ChatState>` in `KisanSaathiWidget`:
+```ts
+type ChatState = "menu" | "fertilizer" | "beej" | "best" | "expert";
+```
+- Header shows back arrow whenever `state !== "menu"`.
+- Each state renders pill-style action buttons; no text input field anywhere.
+- `active:scale-95 duration-100 ease-out` on every tile.
+
+### Data wiring
+- **Fertilizer state**: `items.filter(i => i.category === "Fertilizers")`.
+- **Beej state**: `items.filter(i => i.category === "Seeds")`.
+- **Best Products state**: `items.find(i => i.name === "Eco Root")` with the Hinglish summary card and variant selector reusing the same variant logic.
+- All "Order Now" buttons call `openOrder(item, variant)` from the shared hook, which mounts the same modal over the chatbot.
+
+### Talk to Expert flow
+Local `useState` for animation phase:
+- 0–1.5s: pulsing `Phone` icon + "Finding our kisaan sathi expert..."
+- 1.5s+: `CheckCircle2` + "हमारे एक्सपर्ट बात करने के लिए उपलब्ध हैं।"
+- Primary CTA `<a href="tel:8852003393">` + secondary "Back to menu" button.
+
+## Positioning & styling
+
+- Widget root: `fixed bottom-20 right-4 z-50` (above the sticky `BottomNav` which typically sits at `bottom-0` h≈64px → 80px clearance).
+- **Floating badge**: 56px circular `img` clipped with `rounded-full ring-2 ring-emerald shadow-elegant`. Pop-up bubble absolutely positioned above it (`-top-10`) with `animate-bounce` and a tail.
+- **Chat panel**: `w-[360px] max-w-[90vw] max-h-[60vh]` with `bg-white/95 backdrop-blur-md border border-stone-200/80 rounded-3xl shadow-elegant flex flex-col`. Header (sticky) + scrollable body (`overflow-y-auto`). No footer input.
+- Open/close: badge ↔ panel mutually exclusive via local boolean `isOpen`.
+- Tailwind animations only (`animate-in fade-in zoom-in-95`, `animate-bounce`). Zero new deps.
+
+## Mount point
+At the end of the returned fragment in `ProductsPage` (`src/routes/products.tsx`), after the `OrderFlowModal`, mount `<KisanSaathiWidget />`. The widget owns its own `useOrderFlow` instance or — cleaner — receives `onOrder` as a prop so a single modal instance services both surfaces. **Chosen approach**: lift `useOrderFlow` into `ProductsPage`, pass `openOrder` to both `ProductCard` and `KisanSaathiWidget`, render one `<OrderFlowModal {...modalProps} />`.
 
 ## Files touched
-- `src/routes/products.tsx`
-- `src/assets/products-hero-banner.jpg` (new)
-- `src/assets/eco-root-promo.jpg` (new)
+
+Created:
+- `src/data/products-catalog.ts`
+- `src/components/order/OrderFlowModal.tsx`
+- `src/hooks/useOrderFlow.ts`
+- `src/components/kisan-saathi/KisanSaathiWidget.tsx`
+- `src/components/kisan-saathi/FloatingBadge.tsx`
+- `src/components/kisan-saathi/ChatShell.tsx`
+- `src/components/kisan-saathi/states/{MukhyaMenu,FertilizerSalah,BeejSalah,BestProducts,TalkToExpert}.tsx`
+- `src/components/kisan-saathi/types.ts`
+- `src/assets/kisan-saathi-avatar.png` (copied)
+
+Edited:
+- `src/routes/products.tsx` — replace inline `items`/types/`formatINR`/`WHATSAPP_NUMBER` and modal JSX with imports + extracted components; mount widget.
+
+No router, config, dep, or other route changes.
+
+## Acceptance
+- Badge sits above bottom nav on mobile 728×496, never overlaps it.
+- Tapping badge opens a 360px / max-60vh glassmorphic panel; back/X work; no text input is visible.
+- Each state pulls live data from the shared catalog (changing a price in `items` updates both grid and chatbot).
+- "Order Now" from any chatbot card triggers the identical 3-step processing animation, generates `SAS-2026-####`, and opens the same WhatsApp deep link to `919413050436`.
+- Talk-to-Expert animation hits the dialer at `tel:8852003393`.
+- Type-check clean; products page renders unchanged visually aside from the new floating widget.
