@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Search,
   SlidersHorizontal,
@@ -11,7 +11,14 @@ import {
   Heart,
   Plus,
   Flame,
+  ShoppingBag,
+  Loader2,
+  Check,
+  X,
+  CheckCircle2,
 } from "lucide-react";
+
+const WHATSAPP_NUMBER = "919413050436";
 import heroBanner from "@/assets/products-hero-banner.jpg";
 import ecoRootPromo from "@/assets/eco-root-promo.jpg";
 import ecoRoot from "@/assets/eco-root-box.png";
