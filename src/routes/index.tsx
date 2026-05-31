@@ -7,6 +7,8 @@ import { Products } from "@/components/site/Products";
 import { WhyChooseUs } from "@/components/site/WhyChooseUs";
 import { Testimonials } from "@/components/site/Testimonials";
 import { FinalCta } from "@/components/site/FinalCta";
+import { KisanSaathiWidget } from "@/components/kisan-saathi/KisanSaathiWidget";
+import { useOrderFlow } from "@/hooks/useOrderFlow";
 
 export const Route = createFileRoute("/")({
   component: Index,
