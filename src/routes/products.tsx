@@ -77,6 +77,8 @@ const trustBar = [
 ];
 
 function ProductsPage() {
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+
   const [active, setActive] = useState<Category>("All");
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<Record<string, boolean>>({});
@@ -104,7 +106,9 @@ function ProductsPage() {
           name="description"
           content="Explore our range of eco-friendly agricultural solutions including Eco Root, Eco Green, and Raj Organic Seeds to boost your crop yield."
         />
-        <link rel="canonical" href="https://saniya-harvest.vercel.app/products" />
+        <link rel="canonical" href={currentUrl} />
+        <meta property="og:url" content={currentUrl} />
+        <meta name="twitter:url" content={currentUrl} />
       </Helmet>
 
       <section className="pt-16 md:pt-24 pb-16 bg-secondary/40 min-h-screen">
