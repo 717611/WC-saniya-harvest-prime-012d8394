@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, X, Phone, CheckCircle2, ShoppingBag, Sprout, Wheat, Star, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, X, Phone, CheckCircle2, ShoppingBag } from "lucide-react";
 import avatar from "@/assets/kisan-saathi-avatar.png";
 import {
   items,
@@ -8,7 +8,6 @@ import {
   type Item,
   type Variant,
 } from "@/data/products-catalog";
-import { useEffect } from "react";
 
 type ChatState = "menu" | "fertilizer" | "beej" | "best" | "expert";
 
