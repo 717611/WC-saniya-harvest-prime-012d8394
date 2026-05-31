@@ -18,7 +18,7 @@ const organizationSchema = {
   name: "Saniya Agriculture Solution",
   description:
     "Agricultural Provider — premier provider, marketer and seller of bio organic fertilizers, manures, phosphorus and seeds across India.",
-  url: "https://saniya-harvest.vercel.app/",
+  url: "https://agriculturesolutions.in/",
   keywords: [
     "Bio organic fertilizers",
     "Manures",
@@ -39,7 +39,7 @@ function Index() {
           name="description"
           content="Premier provider, marketer, and seller of high-quality bio organic fertilizers, manures, phosphorus, and seeds for smarter, sustainable farming across India."
         />
-        <link rel="canonical" href="https://saniya-harvest.vercel.app/" />
+        <link rel="canonical" href="https://agriculturesolutions.in/" />
         <script type="application/ld+json">{JSON.stringify(organizationSchema)}</script>
       </Helmet>
       <Hero />
