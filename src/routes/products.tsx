@@ -97,7 +97,7 @@ function ProductsPage() {
               <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-4">
                 <img
                   src={p.image}
-                  alt={p.name}
+                  alt={`${p.name} — ${p.tagline}`}
                   loading="lazy"
                   className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
                 />
@@ -122,5 +122,6 @@ function ProductsPage() {
         </div>
       </div>
     </section>
+    </>
   );
 }
