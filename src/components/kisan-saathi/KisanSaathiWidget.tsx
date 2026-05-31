@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode, Children } from "react";
 import { ArrowLeft, X, Phone, CheckCircle2, ShoppingBag } from "lucide-react";
 import avatar from "@/assets/kisan-saathi-avatar.png";
 import {
@@ -94,8 +94,8 @@ export function KisanSaathiWidget({ onOrder }: Props) {
             </button>
           </div>
 
-          {/* Body */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-3">
+          {/* Body — keyed by state so typing + stagger restart on each transition */}
+          <div key={state} className="flex-1 overflow-y-auto p-3 space-y-3">
             {state === "menu" && <MukhyaMenu onPick={setState} />}
             {state === "fertilizer" && (
               <ProductList
@@ -118,7 +118,49 @@ export function KisanSaathiWidget({ onOrder }: Props) {
   );
 }
 
-function ChatBubble({ children }: { children: React.ReactNode }) {
+/* ---------- Typing bubble ---------- */
+
+// Renders text with **bold** segments preserved.
+function renderRich(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((p, i) =>
+    p.startsWith("**") && p.endsWith("**") ? (
+      <b key={i}>{p.slice(2, -2)}</b>
+    ) : (
+      <span key={i}>{p}</span>
+    ),
+  );
+}
+
+function TypingBubble({
+  text,
+  onDone,
+  speed = 18,
+}: {
+  text: string;
+  onDone?: () => void;
+  speed?: number;
+}) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setCount(0);
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      setCount(i);
+      if (i >= text.length) {
+        clearInterval(id);
+        onDone?.();
+      }
+    }, speed);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, speed]);
+
+  const shown = text.slice(0, count);
+  const done = count >= text.length;
+
   return (
     <div className="flex items-start gap-2">
       <img
@@ -127,13 +169,46 @@ function ChatBubble({ children }: { children: React.ReactNode }) {
         className="size-7 rounded-full object-cover ring-1 ring-emerald/50 shrink-0 mt-0.5"
       />
       <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-secondary/60 border border-border px-3 py-2 text-[12px] text-forest-deep leading-relaxed">
-        {children}
+        {renderRich(shown)}
+        {!done && (
+          <span className="inline-block w-[6px] h-[12px] align-[-1px] ml-0.5 bg-forest-deep/70 animate-pulse" />
+        )}
       </div>
     </div>
   );
 }
 
+/* ---------- Stagger wrapper ---------- */
+
+function Stagger({
+  children,
+  step = 70,
+  delayStart = 0,
+}: {
+  children: ReactNode;
+  step?: number;
+  delayStart?: number;
+}) {
+  const kids = Children.toArray(children);
+  return (
+    <>
+      {kids.map((child, i) => (
+        <div
+          key={i}
+          className="animate-in fade-in slide-in-from-bottom-2 duration-200 ease-out fill-mode-both"
+          style={{ animationDelay: `${delayStart + i * step}ms` }}
+        >
+          {child}
+        </div>
+      ))}
+    </>
+  );
+}
+
+/* ---------- States ---------- */
+
 function MukhyaMenu({ onPick }: { onPick: (s: ChatState) => void }) {
+  const [revealed, setRevealed] = useState(false);
   const options: { key: ChatState; label: string }[] = [
     { key: "fertilizer", label: "🌾 Fertilizer (खाद) salah" },
     { key: "beej", label: "🌱 Beej salah" },
@@ -142,21 +217,26 @@ function MukhyaMenu({ onPick }: { onPick: (s: ChatState) => void }) {
   ];
   return (
     <>
-      <ChatBubble>
-        Namaste 🙏 Main apka <b>kisaan sathi</b>, kheti se judi samasya me madad kar sakta hoon.
-      </ChatBubble>
-      <div className="space-y-2 pt-1">
-        {options.map((o) => (
-          <button
-            key={o.key}
-            onClick={() => onPick(o.key)}
-            className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-2xl bg-forest-gradient text-primary-foreground font-semibold text-[13px] shadow-md active:shadow-sm active:scale-95 duration-100 ease-out transition-all"
-          >
-            <span className="text-left">{o.label}</span>
-            <ArrowLeft className="size-4 rotate-180 opacity-80" />
-          </button>
-        ))}
-      </div>
+      <TypingBubble
+        text="Namaste 🙏 Main apka **kisaan sathi**, kheti se judi samasya me madad kar sakta hoon."
+        onDone={() => setRevealed(true)}
+      />
+      {revealed && (
+        <div className="space-y-2 pt-1">
+          <Stagger>
+            {options.map((o) => (
+              <button
+                key={o.key}
+                onClick={() => onPick(o.key)}
+                className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-2xl bg-forest-gradient text-primary-foreground font-semibold text-[13px] shadow-md active:shadow-sm active:scale-95 duration-100 ease-out transition-all"
+              >
+                <span className="text-left">{o.label}</span>
+                <ArrowLeft className="size-4 rotate-180 opacity-80" />
+              </button>
+            ))}
+          </Stagger>
+        </div>
+      )}
     </>
   );
 }
@@ -224,17 +304,25 @@ function ProductList({
   products: Item[];
   onOrder: (item: Item, variant?: Variant) => void;
 }) {
+  const [revealed, setRevealed] = useState(false);
   if (products.length === 0) {
-    return <ChatBubble>Koi product available nahi hai abhi.</ChatBubble>;
+    return <TypingBubble text="Koi product available nahi hai abhi." />;
   }
   return (
     <>
-      <ChatBubble>Yeh rahe humare top recommendations 👇</ChatBubble>
-      <div className="space-y-2">
-        {products.map((p) => (
-          <MiniProductRow key={p.name} p={p} onOrder={onOrder} />
-        ))}
-      </div>
+      <TypingBubble
+        text="Yeh rahe humare top recommendations 👇"
+        onDone={() => setRevealed(true)}
+      />
+      {revealed && (
+        <div className="space-y-2">
+          <Stagger>
+            {products.map((p) => (
+              <MiniProductRow key={p.name} p={p} onOrder={onOrder} />
+            ))}
+          </Stagger>
+        </div>
+      )}
     </>
   );
 }
@@ -244,14 +332,20 @@ function BestProducts({
 }: {
   onOrder: (item: Item, variant?: Variant) => void;
 }) {
+  const [revealed, setRevealed] = useState(false);
   const ecoRoot = items.find((i) => i.name === "Eco Root");
-  if (!ecoRoot) return <ChatBubble>Product not found.</ChatBubble>;
+  if (!ecoRoot) return <TypingBubble text="Product not found." />;
   return (
     <>
-      <ChatBubble>
-        Eco Root ek <b>premium product</b> hai jo fasal ki jado ka tezi se vikas karta hai aur mitti ki urvarata badhata hai. Ise istemal karne se fasal majboot aur swasth banti hai. 🌿
-      </ChatBubble>
-      <MiniProductRow p={ecoRoot} onOrder={onOrder} />
+      <TypingBubble
+        text="Eco Root ek **premium product** hai jo fasal ki jado ka tezi se vikas karta hai aur mitti ki urvarata badhata hai. Ise istemal karne se fasal majboot aur swasth banti hai. 🌿"
+        onDone={() => setRevealed(true)}
+      />
+      {revealed && (
+        <Stagger>
+          <MiniProductRow p={ecoRoot} onOrder={onOrder} />
+        </Stagger>
+      )}
     </>
   );
 }
@@ -260,7 +354,7 @@ function TalkToExpert() {
   const [connected, setConnected] = useState(false);
   useEffect(() => {
     setConnected(false);
-    const t = setTimeout(() => setConnected(true), 1500);
+    const t = setTimeout(() => setConnected(true), 1800);
     return () => clearTimeout(t);
   }, []);
 
@@ -271,21 +365,22 @@ function TalkToExpert() {
           <div className="size-16 rounded-full bg-emerald/10 grid place-items-center animate-pulse">
             <Phone className="size-7 text-emerald animate-pulse" />
           </div>
-          <p className="mt-4 text-[13px] font-semibold text-forest-deep">
-            Finding our kisaan sathi expert...
-          </p>
+          <div className="mt-4 w-full">
+            <TypingBubble text="Finding our kisaan sathi expert..." />
+          </div>
         </>
       ) : (
         <>
           <div className="size-16 rounded-full bg-emerald/15 grid place-items-center animate-in zoom-in-50 duration-300">
             <CheckCircle2 className="size-10 text-emerald" />
           </div>
-          <p className="mt-4 text-[13px] font-bold text-forest-deep leading-snug">
+          <p className="mt-4 text-[13px] font-bold text-forest-deep leading-snug animate-in fade-in slide-in-from-bottom-2 duration-200">
             हमारे एक्सपर्ट बात करने के लिए उपलब्ध हैं।
           </p>
           <a
             href={`tel:${EXPERT_DIAL_NUMBER}`}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 h-11 rounded-full bg-forest-gradient text-primary-foreground font-semibold text-[13px] shadow-md active:shadow-sm active:scale-95 transition-all duration-100"
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 h-11 rounded-full bg-forest-gradient text-primary-foreground font-semibold text-[13px] shadow-md active:shadow-sm active:scale-95 transition-all duration-100 animate-in fade-in slide-in-from-bottom-2 duration-200"
+            style={{ animationDelay: "70ms" }}
           >
             <Phone className="size-4" /> Call Expert Now
           </a>
