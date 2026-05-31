@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { useMemo, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import ecoRoot from "@/assets/product-eco-root.png";
 import yugm from "@/assets/product-yugm.png";
@@ -37,17 +38,22 @@ const categories: Category[] = ["All", "Fertilizers", "Manures", "Seeds", "Adjuv
 function ProductsPage() {
   const [active, setActive] = useState<Category>("All");
 
-  useEffect(() => {
-    document.title = "Products — Saniya Agriculture Solution";
-  }, []);
-
   const filtered = useMemo(
     () => (active === "All" ? items : items.filter((i) => i.category === active)),
     [active],
   );
 
   return (
-    <section className="pt-24 md:pt-28 pb-16 bg-secondary/40 min-h-screen">
+    <>
+      <Helmet>
+        <title>Our Products | Saniya Agriculture Solution</title>
+        <meta
+          name="description"
+          content="Explore our range of eco-friendly agricultural solutions including Eco Root, Eco Green, and Raj Organic Seeds to boost your crop yield."
+        />
+        <link rel="canonical" href="https://saniya-harvest.vercel.app/products" />
+      </Helmet>
+      <section className="pt-24 md:pt-28 pb-16 bg-secondary/40 min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <p className="text-xs font-bold tracking-[0.25em] text-emerald uppercase">Shop</p>
@@ -91,7 +97,7 @@ function ProductsPage() {
               <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-4">
                 <img
                   src={p.image}
-                  alt={p.name}
+                  alt={`${p.name} — ${p.tagline}`}
                   loading="lazy"
                   className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
                 />
@@ -116,5 +122,6 @@ function ProductsPage() {
         </div>
       </div>
     </section>
+    </>
   );
 }
