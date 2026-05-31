@@ -132,7 +132,7 @@ function ProductsPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search fertilizers, seeds, manures…"
-                className="flex-1 bg-transparent text-[13px] placeholder:text-muted-foreground focus:outline-none"
+                className="flex-1 bg-transparent text-[13px] placeholder:text-muted-foreground focus:outline-none transition-shadow duration-200"
               />
               <button
                 aria-label="Filter"
@@ -152,7 +152,7 @@ function ProductsPage() {
                   <button
                     key={c}
                     onClick={() => setActive(c)}
-                    className={`whitespace-nowrap rounded-full py-1 px-3 text-[11px] font-semibold transition-all ${
+                    className={`whitespace-nowrap rounded-full py-1 px-3 text-[11px] font-semibold transition-all duration-200 ease-out active:scale-95 ${
                       isActive
                         ? "bg-forest-gradient text-primary-foreground shadow-card"
                         : "bg-card text-forest-deep border border-border"
@@ -202,7 +202,7 @@ function ProductsPage() {
               return (
                 <article
                   key={p.name}
-                  className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col"
+                  className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col transition-transform duration-200 active:scale-[0.99]"
                 >
                   {/* Bookmark */}
                   <button
@@ -252,7 +252,7 @@ function ProductsPage() {
                       <a
                         href="tel:+918852003393"
                         aria-label={`Add ${p.name}`}
-                        className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all"
+                        className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
                       >
                         <Plus className="size-4" />
                       </a>
