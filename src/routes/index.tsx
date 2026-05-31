@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
 import { Hero } from "@/components/site/Hero";
 import { StatsStrip } from "@/components/site/StatsStrip";
-import { WhatWeDo } from "@/components/site/WhatWeDo";
+import { SubheroTrust } from "@/components/site/SubheroTrust";
 import { Products } from "@/components/site/Products";
 import { WhyChooseUs } from "@/components/site/WhyChooseUs";
 import { Testimonials } from "@/components/site/Testimonials";
@@ -47,7 +47,7 @@ function Index() {
       </Helmet>
       <Hero />
       <StatsStrip />
-      <WhatWeDo />
+      <SubheroTrust />
       <Products />
       <WhyChooseUs />
       <Testimonials />
