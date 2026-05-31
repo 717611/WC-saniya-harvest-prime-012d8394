@@ -79,26 +79,30 @@ export function SubheroTrust() {
             <span className="h-px bg-stone-300 flex-1" />
           </div>
 
-          <p className="text-stone-800 font-medium text-sm md:text-lg max-w-xl leading-relaxed inline-block md:!bg-transparent md:!border-0 md:!p-0 md:!rounded-none border border-white/60 bg-white/40 backdrop-blur-[2px] px-3 py-2 rounded-xl">
-            Saniya Agriculture Solutions is committed to providing premium
-            quality products and trusted support to farmers across India.
-          </p>
+          <div className="w-[65%] max-w-[65%] md:w-auto md:max-w-xl overflow-hidden rounded-xl md:overflow-visible md:rounded-none">
+            <p className="text-stone-800 font-medium text-sm md:text-lg leading-relaxed md:!bg-none md:!border-0 md:!p-0 md:!rounded-none md:!backdrop-blur-0 border border-white/40 bg-gradient-to-r from-white/25 via-white/10 to-transparent backdrop-blur-[6px] px-3 py-2 rounded-xl">
+              Saniya Agriculture Solutions is committed to providing premium
+              quality products and trusted support to farmers across India.
+            </p>
+          </div>
 
           {/* Value grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-4 pt-1 md:pt-2">
             {values.map((v) => (
               <div
                 key={v.title}
-                className="flex items-center gap-2.5 md:gap-3 md:!bg-transparent md:!border-0 md:!p-0 md:!rounded-none border border-white/60 bg-white/40 backdrop-blur-[2px] px-3 py-1.5 rounded-xl"
+                className="w-[65%] max-w-[65%] md:w-auto md:max-w-none overflow-hidden rounded-xl md:overflow-visible md:rounded-none"
               >
-                <div className="size-9 md:size-11 rounded-full border-2 border-emerald-700/30 grid place-items-center text-emerald-700 bg-white/60 backdrop-blur-sm shrink-0">
-                  <v.icon className="size-4 md:size-5" />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-bold text-emerald-950 text-xs md:text-sm leading-tight">
-                    {v.title}
+                <div className="flex items-center gap-2.5 md:gap-3 md:!bg-none md:!border-0 md:!p-0 md:!rounded-none md:!backdrop-blur-0 border border-white/40 bg-gradient-to-r from-white/25 via-white/10 to-transparent backdrop-blur-[6px] px-3 py-1.5 rounded-xl">
+                  <div className="size-9 md:size-11 rounded-full border-2 border-emerald-700/30 grid place-items-center text-emerald-700 bg-white/60 backdrop-blur-sm shrink-0">
+                    <v.icon className="size-4 md:size-5" />
                   </div>
-                  <div className="text-stone-600 text-[10px] md:text-xs">{v.meta}</div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-emerald-950 text-xs md:text-sm leading-tight">
+                      {v.title}
+                    </div>
+                    <div className="text-stone-600 text-[10px] md:text-xs">{v.meta}</div>
+                  </div>
                 </div>
               </div>
             ))}
