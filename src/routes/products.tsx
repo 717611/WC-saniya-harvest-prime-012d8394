@@ -85,10 +85,12 @@ function ProductCard({
   p,
   isSaved,
   onToggleSave,
+  onOrder,
 }: {
   p: Item;
   isSaved: boolean;
   onToggleSave: () => void;
+  onOrder: (p: Item, variant?: Variant) => void;
 }) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>(
     p.defaultVariant,
@@ -96,19 +98,8 @@ function ProductCard({
   const activeVariant = p.variants?.find((v) => v.label === selectedVariant);
   const displayPrice = activeVariant ? formatINR(activeVariant.price) : p.price;
 
-  const handleAdd = () => {
-    const payload = {
-      name: p.name,
-      variant: activeVariant?.label,
-      price: activeVariant?.price,
-    };
-    // Capture chosen variant for checkout cart payload
-    console.log("cart:add", payload);
-    window.location.href = "tel:+918852003393";
-  };
-
   return (
-    <article className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col transition-transform duration-200 active:scale-[0.99]">
+    <article className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 overflow-hidden flex flex-col transition-all duration-200 active:scale-[0.99]">
       <button
         aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
         onClick={onToggleSave}
@@ -170,27 +161,21 @@ function ProductCard({
         )}
 
         <div className="mt-1 flex items-end justify-between">
-          <span className="font-display font-bold text-forest-deep text-base">
+          <span
+            key={displayPrice}
+            className="font-display font-bold text-forest-deep text-base animate-in fade-in duration-200"
+          >
             {displayPrice}
           </span>
-          {p.variants ? (
-            <button
-              onClick={handleAdd}
-              aria-label={`Add ${p.name} ${activeVariant?.label ?? ""}`}
-              className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
-            >
-              <Plus className="size-4" />
-            </button>
-          ) : (
-            <a
-              href="tel:+918852003393"
-              aria-label={`Add ${p.name}`}
-              className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
-            >
-              <Plus className="size-4" />
-            </a>
-          )}
         </div>
+
+        <button
+          onClick={() => onOrder(p, activeVariant)}
+          className="mt-2 w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-forest-gradient text-primary-foreground py-2 text-[12px] font-semibold tracking-tight shadow-md active:shadow-sm transition-all active:scale-95 duration-100 ease-out"
+        >
+          <ShoppingBag className="size-3.5" />
+          Order Now
+        </button>
       </div>
     </article>
   );
