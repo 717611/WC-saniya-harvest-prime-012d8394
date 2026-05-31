@@ -16,7 +16,7 @@ function AboutPage() {
           name="description"
           content="Led by C.M.D. A.K. Singhal, Saniya Agriculture Solution is committed to providing top-tier agricultural products and services for the betterment of farmers."
         />
-        <link rel="canonical" href="https://saniya-harvest.vercel.app/about" />
+        <link rel="canonical" href="https://agriculturesolutions.in/about" />
       </Helmet>
     <div className="pt-24 md:pt-28 pb-16 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
