@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import heroBanner from "@/assets/products-hero-banner.jpg";
 import ecoRootPromo from "@/assets/eco-root-promo.jpg";
-import ecoRoot from "@/assets/product-eco-root.png";
+import ecoRoot from "@/assets/eco-root-box.png";
 import yugm from "@/assets/product-yugm.png";
 import rajSeeds from "@/assets/product-raj-seeds.png";
 import uttamFasal from "@/assets/product-uttam-fasal.png";
@@ -34,6 +34,8 @@ type Category =
   | "Phosphorus"
   | "Best Sellers";
 
+type Variant = { label: string; price: number };
+
 type Item = {
   name: string;
   category: Exclude<Category, "All" | "Best Sellers">;
@@ -41,6 +43,8 @@ type Item = {
   tagline: string;
   price: string;
   bestSeller?: boolean;
+  variants?: Variant[];
+  defaultVariant?: string;
 };
 
 const items: Item[] = [
@@ -49,8 +53,14 @@ const items: Item[] = [
     category: "Fertilizers",
     image: ecoRoot,
     tagline: "Humic Acid 98%",
-    price: "₹1000",
+    price: "₹1,000",
     bestSeller: true,
+    variants: [
+      { label: "250g", price: 350 },
+      { label: "500g", price: 600 },
+      { label: "1kg", price: 1000 },
+    ],
+    defaultVariant: "1kg",
   },
   { name: "Eco Green", category: "Fertilizers", image: ecoGreen, tagline: "Liquid organic booster", price: "₹650" },
   { name: "Eco Granule", category: "Fertilizers", image: ecoGranule, tagline: "Granular crop nutrition", price: "₹550" },
@@ -59,6 +69,125 @@ const items: Item[] = [
   { name: "RAJ Organic Seeds R-46", category: "Seeds", image: rajSeeds, tagline: "Improved mustard seed", price: "₹420" },
   { name: "Silk", category: "Manures", image: silk, tagline: "Trisiloxane spread adjuvant", price: "₹380" },
 ];
+
+function formatINR(n: number) {
+  return `₹${n.toLocaleString("en-IN")}`;
+}
+
+function ProductCard({
+  p,
+  isSaved,
+  onToggleSave,
+}: {
+  p: Item;
+  isSaved: boolean;
+  onToggleSave: () => void;
+}) {
+  const [selectedVariant, setSelectedVariant] = useState<string | undefined>(
+    p.defaultVariant,
+  );
+  const activeVariant = p.variants?.find((v) => v.label === selectedVariant);
+  const displayPrice = activeVariant ? formatINR(activeVariant.price) : p.price;
+
+  const handleAdd = () => {
+    const payload = {
+      name: p.name,
+      variant: activeVariant?.label,
+      price: activeVariant?.price,
+    };
+    // Capture chosen variant for checkout cart payload
+    console.log("cart:add", payload);
+    window.location.href = "tel:+918852003393";
+  };
+
+  return (
+    <article className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col transition-transform duration-200 active:scale-[0.99]">
+      <button
+        aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
+        onClick={onToggleSave}
+        className="absolute top-2 right-2 z-10 size-7 grid place-items-center rounded-full bg-white/85 backdrop-blur-sm border border-border shadow-sm"
+      >
+        <Heart
+          className={`size-3.5 transition-colors ${
+            isSaved ? "fill-emerald text-emerald" : "text-forest-deep/70"
+          }`}
+        />
+      </button>
+
+      {p.bestSeller && (
+        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-gold/90 text-forest-deep px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-sm">
+          <Flame className="size-2.5" /> Best
+        </span>
+      )}
+
+      <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-3">
+        <img
+          src={p.image}
+          alt={`${p.name} — ${p.tagline}`}
+          loading="lazy"
+          className="max-h-full max-w-full object-contain bg-transparent drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+
+      <div className="relative p-2.5 flex flex-col gap-0.5">
+        <p className="text-[9px] uppercase tracking-wider text-emerald font-bold">
+          {p.category}
+        </p>
+        <h3 className="font-display font-bold text-forest-deep text-[13px] leading-tight line-clamp-1">
+          {p.name}
+        </h3>
+        <p className="text-[10px] text-muted-foreground line-clamp-1">
+          {p.tagline}
+        </p>
+
+        {p.variants && p.variants.length > 0 && (
+          <div className="mt-1.5 flex gap-1">
+            {p.variants.map((v) => {
+              const isSel = v.label === selectedVariant;
+              return (
+                <button
+                  key={v.label}
+                  onClick={() => setSelectedVariant(v.label)}
+                  aria-pressed={isSel}
+                  className={`flex-1 rounded-full py-1 text-[10px] font-semibold transition-all active:scale-95 duration-100 ${
+                    isSel
+                      ? "bg-forest-gradient text-primary-foreground shadow-sm"
+                      : "bg-secondary/60 text-forest-deep border border-border"
+                  }`}
+                >
+                  {v.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="mt-1 flex items-end justify-between">
+          <span className="font-display font-bold text-forest-deep text-base">
+            {displayPrice}
+          </span>
+          {p.variants ? (
+            <button
+              onClick={handleAdd}
+              aria-label={`Add ${p.name} ${activeVariant?.label ?? ""}`}
+              className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
+            >
+              <Plus className="size-4" />
+            </button>
+          ) : (
+            <a
+              href="tel:+918852003393"
+              aria-label={`Add ${p.name}`}
+              className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
+            >
+              <Plus className="size-4" />
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
 
 const categories: Category[] = [
   "All",
@@ -197,70 +326,16 @@ function ProductsPage() {
 
           {/* 6. Product Grid */}
           <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-            {filtered.map((p) => {
-              const isSaved = !!saved[p.name];
-              return (
-                <article
-                  key={p.name}
-                  className="group relative bg-card rounded-2xl border border-border shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col transition-transform duration-200 active:scale-[0.99]"
-                >
-                  {/* Bookmark */}
-                  <button
-                    aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
-                    onClick={() => setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))}
-                    className="absolute top-2 right-2 z-10 size-7 grid place-items-center rounded-full bg-white/85 backdrop-blur-sm border border-border shadow-sm"
-                  >
-                    <Heart
-                      className={`size-3.5 transition-colors ${
-                        isSaved ? "fill-emerald text-emerald" : "text-forest-deep/70"
-                      }`}
-                    />
-                  </button>
-
-                  {/* Best Seller pill */}
-                  {p.bestSeller && (
-                    <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-gold/90 text-forest-deep px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-sm">
-                      <Flame className="size-2.5" /> Best
-                    </span>
-                  )}
-
-                  {/* Image well */}
-                  <div className="aspect-square bg-gradient-to-b from-secondary/60 to-background grid place-items-center p-3">
-                    <img
-                      src={p.image}
-                      alt={`${p.name} — ${p.tagline}`}
-                      loading="lazy"
-                      className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  {/* Info */}
-                  <div className="relative p-2.5 flex flex-col gap-0.5">
-                    <p className="text-[9px] uppercase tracking-wider text-emerald font-bold">
-                      {p.category}
-                    </p>
-                    <h3 className="font-display font-bold text-forest-deep text-[13px] leading-tight line-clamp-1">
-                      {p.name}
-                    </h3>
-                    <p className="text-[10px] text-muted-foreground line-clamp-1">
-                      {p.tagline}
-                    </p>
-                    <div className="mt-1 flex items-end justify-between">
-                      <span className="font-display font-bold text-forest-deep text-base">
-                        {p.price}
-                      </span>
-                      <a
-                        href="tel:+918852003393"
-                        aria-label={`Add ${p.name}`}
-                        className="size-9 grid place-items-center rounded-full bg-forest-gradient text-primary-foreground shadow-md active:shadow-sm transition-all duration-100 ease-out active:scale-90"
-                      >
-                        <Plus className="size-4" />
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+            {filtered.map((p) => (
+              <ProductCard
+                key={p.name}
+                p={p}
+                isSaved={!!saved[p.name]}
+                onToggleSave={() =>
+                  setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))
+                }
+              />
+            ))}
           </div>
 
           {filtered.length === 0 && (
