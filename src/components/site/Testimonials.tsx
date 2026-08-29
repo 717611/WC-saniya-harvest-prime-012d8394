@@ -4,9 +4,24 @@ import f2 from "@/assets/farmer-2.jpg";
 import f3 from "@/assets/farmer-3.jpg";
 
 const reviews = [
-  { img: f1, name: "Ramesh Patel", loc: "Farmer, Maharashtra", text: "Eco Root has improved root strength and overall plant health in our crops. Very effective product." },
-  { img: f2, name: "Suresh Yadav", loc: "Farmer, Madhya Pradesh", text: "The organic manure is excellent for soil health and crop growth. We saw better results this season." },
-  { img: f3, name: "Mahavir Singh", loc: "Farmer, Rajasthan", text: "Good quality seeds with high germination. Totally satisfied with the product quality." },
+  {
+    img: f1,
+    name: "Ramesh Patel",
+    loc: "Farmer, Maharashtra",
+    text: "Eco Root has improved root strength and overall plant health in our crops. Very effective product.",
+  },
+  {
+    img: f2,
+    name: "Suresh Yadav",
+    loc: "Farmer, Madhya Pradesh",
+    text: "The organic manure is excellent for soil health and crop growth. We saw better results this season.",
+  },
+  {
+    img: f3,
+    name: "Mahavir Singh",
+    loc: "Farmer, Rajasthan",
+    text: "Good quality seeds with high germination. Totally satisfied with the product quality.",
+  },
 ];
 
 export function Testimonials() {

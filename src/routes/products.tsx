@@ -14,15 +14,8 @@ import {
 } from "lucide-react";
 import heroBanner from "@/assets/products-hero-banner.jpg";
 import ecoRootPromo from "@/assets/eco-root-promo.jpg";
-import {
-  items,
-  formatINR,
-  type Category,
-  type Item,
-  type Variant,
-} from "@/data/products-catalog";
+import { items, formatINR, type Category, type Item, type Variant } from "@/data/products-catalog";
 import { useOrderFlow } from "@/hooks/useOrderFlow";
-
 
 export const Route = createFileRoute("/products")({
   component: ProductsPage,
@@ -39,9 +32,7 @@ function ProductCard({
   onToggleSave: () => void;
   onOrder: (p: Item, variant?: Variant) => void;
 }) {
-  const [selectedVariant, setSelectedVariant] = useState<string | undefined>(
-    p.defaultVariant,
-  );
+  const [selectedVariant, setSelectedVariant] = useState<string | undefined>(p.defaultVariant);
   const activeVariant = p.variants?.find((v) => v.label === selectedVariant);
   const displayPrice = activeVariant ? formatINR(activeVariant.price) : p.price;
 
@@ -75,15 +66,11 @@ function ProductCard({
       </div>
 
       <div className="relative p-2.5 flex flex-col gap-0.5">
-        <p className="text-[9px] uppercase tracking-wider text-emerald font-bold">
-          {p.category}
-        </p>
+        <p className="text-[9px] uppercase tracking-wider text-emerald font-bold">{p.category}</p>
         <h3 className="font-display font-bold text-forest-deep text-[13px] leading-tight line-clamp-1">
           {p.name}
         </h3>
-        <p className="text-[10px] text-muted-foreground line-clamp-1">
-          {p.tagline}
-        </p>
+        <p className="text-[10px] text-muted-foreground line-clamp-1">{p.tagline}</p>
 
         {p.variants && p.variants.length > 0 && (
           <div className="mt-1.5 flex gap-1">
@@ -272,9 +259,7 @@ function ProductsPage() {
                 key={p.name}
                 p={p}
                 isSaved={!!saved[p.name]}
-                onToggleSave={() =>
-                  setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))
-                }
+                onToggleSave={() => setSaved((s) => ({ ...s, [p.name]: !s[p.name] }))}
                 onOrder={openOrder}
               />
             ))}
@@ -290,6 +275,5 @@ function ProductsPage() {
 
       {modal}
     </>
-
   );
 }

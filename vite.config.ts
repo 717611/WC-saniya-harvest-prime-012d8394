@@ -17,5 +17,5 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: { outDir: "dist" },
-  server: { host: "::", port: 8080, strictPort: false },
+  server: { host: "0.0.0.0", port: 3000 },
 });

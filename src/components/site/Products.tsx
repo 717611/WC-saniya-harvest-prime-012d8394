@@ -1,4 +1,13 @@
-import { Check, ShoppingCart, MessageCircle, ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import {
+  Check,
+  ShoppingCart,
+  MessageCircle,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -9,7 +18,7 @@ import uttamFasal from "@/assets/product-uttam-fasal.png";
 import ecoGreen from "@/assets/product-eco-green.png";
 import silk from "@/assets/product-silk.png";
 import ecoGranule from "@/assets/product-eco-granule.png";
-import logo from "@/assets/saniya-logo.png";
+import logo from "@/assets/saniya-logo-full.png";
 
 type Product = {
   image: string;
@@ -19,7 +28,7 @@ type Product = {
   benefits: string[];
   prices?: { label: string; price: string }[];
   meta?: { label: string; value: string }[];
-  cta: { label: string; icon: any; href: string };
+  cta: { label: string; icon: LucideIcon; href: string };
   badge: string;
   badgeTone: "gold" | "emerald";
 };
@@ -31,7 +40,11 @@ const products: Product[] = [
     category: "Organic Soil Conditioner",
     description:
       "Advanced humic acid formulation designed to improve root growth, nutrient absorption, and soil fertility for healthier crop development.",
-    benefits: ["Stronger Root Development", "Better Nutrient Absorption", "Improves Soil Health & Structure"],
+    benefits: [
+      "Stronger Root Development",
+      "Better Nutrient Absorption",
+      "Improves Soil Health & Structure",
+    ],
     prices: [
       { label: "1 KG", price: "₹1000" },
       { label: "500 GM", price: "₹625" },
@@ -68,7 +81,12 @@ const products: Product[] = [
     category: "Improved Mustard Seed",
     description:
       "High-quality hybrid mustard seed variety with strong germination, better oil content, and improved crop performance.",
-    benefits: ["High Germination & Vigour", "Better Plant Growth", "Higher Oil Content", "Disease Resistance"],
+    benefits: [
+      "High Germination & Vigour",
+      "Better Plant Growth",
+      "Higher Oil Content",
+      "Disease Resistance",
+    ],
     cta: { label: "Get Details", icon: ArrowRight, href: "#contact" },
     badge: "Premium Seeds",
     badgeTone: "gold",
@@ -95,7 +113,12 @@ const products: Product[] = [
     category: "Liquid Organic Growth Booster",
     description:
       "Premium liquid humic solution formulated for healthy soil, improved nutrient efficiency, and enhanced crop productivity.",
-    benefits: ["Healthy Soil Development", "Better Crop Yield", "Organic Plant Nutrition", "Improves Root Activity"],
+    benefits: [
+      "Healthy Soil Development",
+      "Better Crop Yield",
+      "Organic Plant Nutrition",
+      "Improves Root Activity",
+    ],
     meta: [{ label: "Net Content", value: "1 Litre" }],
     cta: { label: "Order Now", icon: ShoppingCart, href: "tel:+918852003393" },
     badge: "100% Organic",
@@ -107,7 +130,12 @@ const products: Product[] = [
     category: "Trisiloxane Spread Adjuvant",
     description:
       "High-performance trisiloxane spread adjuvant that improves spray coverage, penetration, and effectiveness on crops.",
-    benefits: ["Better Spray Coverage", "Faster Absorption", "Improves Pesticide Efficiency", "Rainfast Performance"],
+    benefits: [
+      "Better Spray Coverage",
+      "Faster Absorption",
+      "Improves Pesticide Efficiency",
+      "Rainfast Performance",
+    ],
     cta: { label: "Get Details", icon: ArrowRight, href: "#contact" },
     badge: "Advanced Formula",
     badgeTone: "gold",
@@ -118,7 +146,12 @@ const products: Product[] = [
     category: "Granular Crop Nutrition",
     description:
       "Advanced eco granule formulation designed to support balanced crop nutrition and improve plant growth performance.",
-    benefits: ["Balanced Nutrition", "Better Soil Conditioning", "Supports Plant Growth", "Improves Yield Quality"],
+    benefits: [
+      "Balanced Nutrition",
+      "Better Soil Conditioning",
+      "Supports Plant Growth",
+      "Improves Yield Quality",
+    ],
     cta: { label: "Enquire Now", icon: MessageCircle, href: "https://wa.me/918852003393" },
     badge: "Eco Care",
     badgeTone: "emerald",
@@ -158,7 +191,8 @@ export function Products() {
             Featured Products
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            Premium agricultural solutions designed for healthier soil, stronger crops, and sustainable farming results.
+            Premium agricultural solutions designed for healthier soil, stronger crops, and
+            sustainable farming results.
           </p>
         </div>
 
@@ -213,11 +247,15 @@ export function Products() {
                       />
                     </div>
                     <div className="p-6 flex flex-col flex-1">
-                      <h3 className="font-display font-bold text-xl text-forest-deep text-center">{p.name}</h3>
+                      <h3 className="font-display font-bold text-xl text-forest-deep text-center">
+                        {p.name}
+                      </h3>
                       <p className="text-center text-[11px] font-semibold tracking-wider text-emerald uppercase mt-1">
                         {p.category}
                       </p>
-                      <p className="mt-3 text-sm text-muted-foreground text-center line-clamp-2">{p.description}</p>
+                      <p className="mt-3 text-sm text-muted-foreground text-center line-clamp-2">
+                        {p.description}
+                      </p>
 
                       {p.prices && p.prices.length > 0 && (
                         <div className="mt-4 flex flex-wrap gap-2 justify-center">
@@ -229,7 +267,9 @@ export function Products() {
                               <div className="text-[10px] font-semibold text-muted-foreground tracking-wide">
                                 {pr.label}
                               </div>
-                              <div className="font-display font-bold text-forest-deep">{pr.price}</div>
+                              <div className="font-display font-bold text-forest-deep">
+                                {pr.price}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -245,7 +285,9 @@ export function Products() {
                               <div className="text-[10px] font-semibold text-muted-foreground tracking-wide">
                                 {m.label}
                               </div>
-                              <div className="font-display font-bold text-forest-deep text-sm">{m.value}</div>
+                              <div className="font-display font-bold text-forest-deep text-sm">
+                                {m.value}
+                              </div>
                             </div>
                           ))}
                         </div>

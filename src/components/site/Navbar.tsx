@@ -4,8 +4,7 @@ import { Link } from "@tanstack/react-router";
 import logo from "@/assets/saniya-logo-full.png";
 
 type NavLink =
-  | { label: string; to: string; kind: "route" }
-  | { label: string; href: string; kind: "anchor" };
+  { label: string; to: string; kind: "route" } | { label: string; href: string; kind: "anchor" };
 
 const links: NavLink[] = [
   { label: "Home", to: "/", kind: "route" },

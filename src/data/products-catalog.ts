@@ -9,13 +9,7 @@ import ecoGranule from "@/assets/product-eco-granule.png";
 export const WHATSAPP_NUMBER = "919413050436";
 export const EXPERT_DIAL_NUMBER = "8852003393";
 
-export type Category =
-  | "All"
-  | "Fertilizers"
-  | "Manures"
-  | "Seeds"
-  | "Phosphorus"
-  | "Best Sellers";
+export type Category = "All" | "Fertilizers" | "Manures" | "Seeds" | "Phosphorus" | "Best Sellers";
 
 export type Variant = { label: string; price: number };
 
@@ -45,12 +39,49 @@ export const items: Item[] = [
     ],
     defaultVariant: "1kg",
   },
-  { name: "Eco Green", category: "Fertilizers", image: ecoGreen, tagline: "Liquid organic booster", price: "₹650" },
-  { name: "Eco Granule", category: "Fertilizers", image: ecoGranule, tagline: "Granular crop nutrition", price: "₹550" },
-  { name: "Uttam Fasal", category: "Fertilizers", image: uttamFasal, tagline: "Humic + seaweed granules", price: "₹480" },
-  { name: "युग्म मोर प्रोम", category: "Phosphorus", image: yugm, tagline: "Phosphate rich organic manure", price: "₹1600", bestSeller: true },
-  { name: "RAJ Organic Seeds R-46", category: "Seeds", image: rajSeeds, tagline: "Improved mustard seed", price: "₹420" },
-  { name: "Silk", category: "Manures", image: silk, tagline: "Trisiloxane spread adjuvant", price: "₹380" },
+  {
+    name: "Eco Green",
+    category: "Fertilizers",
+    image: ecoGreen,
+    tagline: "Liquid organic booster",
+    price: "₹650",
+  },
+  {
+    name: "Eco Granule",
+    category: "Fertilizers",
+    image: ecoGranule,
+    tagline: "Granular crop nutrition",
+    price: "₹550",
+  },
+  {
+    name: "Uttam Fasal",
+    category: "Fertilizers",
+    image: uttamFasal,
+    tagline: "Humic + seaweed granules",
+    price: "₹1600",
+  },
+  {
+    name: "युग्म मोर प्रोम",
+    category: "Phosphorus",
+    image: yugm,
+    tagline: "Phosphate rich organic manure",
+    price: "₹1600",
+    bestSeller: true,
+  },
+  {
+    name: "RAJ Organic Seeds R-46",
+    category: "Seeds",
+    image: rajSeeds,
+    tagline: "Improved mustard seed",
+    price: "₹1300",
+  },
+  {
+    name: "Silk",
+    category: "Manures",
+    image: silk,
+    tagline: "Trisiloxane spread adjuvant",
+    price: "₹380",
+  },
 ];
 
 export function formatINR(n: number) {
@@ -65,9 +96,7 @@ export type OrderTarget = {
 };
 
 export function buildOrderTarget(p: Item, variant?: Variant): OrderTarget {
-  const numericPrice = variant
-    ? variant.price
-    : Number(p.price.replace(/[^\d]/g, "")) || 0;
+  const numericPrice = variant ? variant.price : Number(p.price.replace(/[^\d]/g, "")) || 0;
   return {
     product: p,
     variant,

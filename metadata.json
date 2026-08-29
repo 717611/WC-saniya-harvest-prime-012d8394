@@ -1,0 +1,6 @@
+{
+  "name": "Saniya Agriculture Solution",
+  "description": "Premium organic bio fertilizers, manures, phosphorus-rich PROM and quality seeds for farmers across India.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -4,10 +4,7 @@ import heroLandscape from "@/assets/hero-products-landscape.png";
 
 export function Hero() {
   return (
-    <section
-      id="home"
-      className="relative min-h-[100svh] md:flex md:flex-row overflow-hidden"
-    >
+    <section id="home" className="relative min-h-[100svh] md:flex md:flex-row overflow-hidden">
       {/* MOBILE background image */}
       <img
         src={heroPortrait}
@@ -42,7 +39,8 @@ export function Hero() {
             BUY BEST QUALITY Bio organic fertilizers, Manures, Phosphorus & Seeds.
           </h1>
           <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg text-balance">
-            Supporting healthier soil, stronger roots and sustainable crop growth with trusted agricultural solutions.
+            Supporting healthier soil, stronger roots and sustainable crop growth with trusted
+            agricultural solutions.
           </p>
 
           <div className="mt-5 md:mt-8 flex flex-wrap gap-3">

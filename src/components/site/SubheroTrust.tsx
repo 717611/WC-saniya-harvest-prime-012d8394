@@ -32,10 +32,7 @@ const avatars = [
 
 export function SubheroTrust() {
   return (
-    <section
-      id="trust"
-      className="relative overflow-hidden py-12 md:py-24 bg-[var(--cream)]"
-    >
+    <section id="trust" className="relative overflow-hidden py-12 md:py-24 bg-[var(--cream)]">
       {/* Background images */}
       <img
         src={farmerDesktop}
@@ -57,9 +54,18 @@ export function SubheroTrust() {
       {/* Floating leaves */}
       <div className="pointer-events-none absolute inset-0">
         <Leaf className="absolute top-10 left-[6%] size-8 md:size-10 text-emerald-700/15 rotate-12 blur-[1px] animate-float" />
-        <Leaf className="absolute top-[35%] left-[42%] size-6 md:size-8 text-emerald-700/10 -rotate-45 blur-[1px] animate-float" style={{ animationDelay: "1.5s" }} />
-        <Leaf className="absolute bottom-12 left-[10%] size-9 md:size-12 text-emerald-700/15 rotate-45 blur-[1px] animate-float" style={{ animationDelay: "0.8s" }} />
-        <Leaf className="hidden md:block absolute top-[20%] right-[8%] size-10 text-emerald-700/10 -rotate-12 blur-[1px] animate-float" style={{ animationDelay: "2s" }} />
+        <Leaf
+          className="absolute top-[35%] left-[42%] size-6 md:size-8 text-emerald-700/10 -rotate-45 blur-[1px] animate-float"
+          style={{ animationDelay: "1.5s" }}
+        />
+        <Leaf
+          className="absolute bottom-12 left-[10%] size-9 md:size-12 text-emerald-700/15 rotate-45 blur-[1px] animate-float"
+          style={{ animationDelay: "0.8s" }}
+        />
+        <Leaf
+          className="hidden md:block absolute top-[20%] right-[8%] size-10 text-emerald-700/10 -rotate-12 blur-[1px] animate-float"
+          style={{ animationDelay: "2s" }}
+        />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-12 md:gap-8 md:items-center">
@@ -70,7 +76,8 @@ export function SubheroTrust() {
           </span>
 
           <h2 className="text-emerald-950 font-display font-bold text-2xl md:text-5xl leading-tight [text-shadow:0_1px_0_rgba(255,255,255,0.6)]">
-            किसानों का भरोसा,<br className="md:hidden" /> बेहतर खेती का साथी।
+            किसानों का भरोसा,
+            <br className="md:hidden" /> बेहतर खेती का साथी।
           </h2>
 
           <div className="flex items-center gap-3 max-w-md">
@@ -81,8 +88,8 @@ export function SubheroTrust() {
 
           <div className="w-[65%] max-w-[65%] md:w-auto md:max-w-xl overflow-hidden rounded-xl md:overflow-visible md:rounded-none">
             <p className="text-stone-800 font-medium text-sm md:text-lg leading-relaxed md:!bg-none md:!border-0 md:!p-0 md:!rounded-none md:!backdrop-blur-0 border border-white/40 bg-gradient-to-r from-white/25 via-white/10 to-transparent backdrop-blur-[6px] px-3 py-2 rounded-xl">
-              Saniya Agriculture Solutions is committed to providing premium
-              quality products and trusted support to farmers across India.
+              Saniya Agriculture Solutions is committed to providing premium quality products and
+              trusted support to farmers across India.
             </p>
           </div>
 
@@ -156,12 +163,10 @@ export function SubheroTrust() {
               ))}
             </div>
             <p className="text-stone-800 text-sm font-medium leading-relaxed">
-              "Eco Root ने मेरी फसल की पैदावार बहुत बढ़ा दी। मिट्टी पहले से
-              बेहतर है और पौधों की जड़ें मज़बूत हैं।"
+              "Eco Root ने मेरी फसल की पैदावार बहुत बढ़ा दी। मिट्टी पहले से बेहतर है और पौधों की
+              जड़ें मज़बूत हैं।"
             </p>
-            <div className="mt-3 text-xs font-bold text-emerald-900">
-              — रमेश कुमार, राजस्थान
-            </div>
+            <div className="mt-3 text-xs font-bold text-emerald-900">— रमेश कुमार, राजस्थान</div>
           </div>
         </div>
 

@@ -327,11 +327,7 @@ function ProductList({
   );
 }
 
-function BestProducts({
-  onOrder,
-}: {
-  onOrder: (item: Item, variant?: Variant) => void;
-}) {
+function BestProducts({ onOrder }: { onOrder: (item: Item, variant?: Variant) => void }) {
   const [revealed, setRevealed] = useState(false);
   const ecoRoot = items.find((i) => i.name === "Eco Root");
   if (!ecoRoot) return <TypingBubble text="Product not found." />;
@@ -384,9 +380,7 @@ function TalkToExpert() {
           >
             <Phone className="size-4" /> Call Expert Now
           </a>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            +91 {EXPERT_DIAL_NUMBER}
-          </p>
+          <p className="mt-2 text-[11px] text-muted-foreground">+91 {EXPERT_DIAL_NUMBER}</p>
         </>
       )}
     </div>

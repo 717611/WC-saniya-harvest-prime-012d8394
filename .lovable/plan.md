@@ -3,6 +3,7 @@
 Replace `<WhatWeDo />` on `/` with a pixel-crafted "Subhero Trust" section using the two uploaded farmer photos. Other home sections and global chrome (Kisan Saathi widget, BottomNav) untouched.
 
 ### Refinements from user feedback
+
 1. **Scrim colors → global cream theme.** Replace `stone-50` in scrims with the project's existing `--cream` token via `bg-[var(--cream)]` (and `via-[color-mix(in_oklab,var(--cream)_90%,transparent)]`). This matches the page canvas and removes any seam.
 2. **Avatar stack → stylized initials, no pravatar.cc.** Render 5 circular avatars with farmer-style initials (e.g., RK, SP, MV, AY, BJ) using a rotating warm earth-tone palette: `bg-emerald-700`, `bg-amber-600`, `bg-stone-600`, `bg-yellow-700` (ochre), `bg-emerald-900`. White bold initials, `ring-2 ring-white`, overlapping `-ml-2`.
 
@@ -42,6 +43,7 @@ Replace `<WhatWeDo />` on `/` with a pixel-crafted "Subhero Trust" section using
   **Mobile-only review card** (below CTA, `md:hidden`): `bg-[#fefce8] border border-stone-200/60 p-5 rounded-3xl shadow-lg` with a short trust quote.
 
 ### Tech notes
+
 - Uses existing `--cream` token from `src/styles.css` so scrims blend with the page canvas.
 - No new deps; icons from `lucide-react`.
 - `Link` from `@tanstack/react-router`; `/products` route already exists.

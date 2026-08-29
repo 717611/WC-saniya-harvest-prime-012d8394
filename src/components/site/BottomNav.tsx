@@ -29,11 +29,7 @@ export function BottomNav() {
             }`}
           >
             <Icon className="size-5 shrink-0" />
-            {active && (
-              <span className="text-sm font-semibold whitespace-nowrap">
-                {t.label}
-              </span>
-            )}
+            {active && <span className="text-sm font-semibold whitespace-nowrap">{t.label}</span>}
           </Link>
         );
       })}

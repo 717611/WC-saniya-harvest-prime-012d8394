@@ -130,12 +130,17 @@ export function useOrderFlow() {
                 </h3>
                 {orderTarget.variant && (
                   <p className="text-[11px] text-muted-foreground">
-                    Variant: <span className="font-semibold text-forest-deep">{orderTarget.variant.label}</span>
+                    Variant:{" "}
+                    <span className="font-semibold text-forest-deep">
+                      {orderTarget.variant.label}
+                    </span>
                   </p>
                 )}
               </div>
               <div className="text-right">
-                <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Total</div>
+                <div className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                  Total
+                </div>
                 <div className="font-display font-bold text-forest-deep text-base">
                   {orderTarget.priceLabel}
                 </div>
@@ -157,14 +162,14 @@ export function useOrderFlow() {
               <div>
                 <label className="text-[11px] font-semibold text-forest-deep">Mobile Number</label>
                 <div className="mt-1 flex items-center h-11 rounded-xl border border-border bg-white focus-within:ring-2 focus-within:ring-emerald/40 transition-shadow duration-200">
-                  <span className="px-3 text-[13px] text-muted-foreground border-r border-border">+91</span>
+                  <span className="px-3 text-[13px] text-muted-foreground border-r border-border">
+                    +91
+                  </span>
                   <input
                     type="tel"
                     inputMode="numeric"
                     value={custPhone}
-                    onChange={(e) =>
-                      setCustPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
-                    }
+                    onChange={(e) => setCustPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     placeholder="10-digit mobile"
                     className="flex-1 h-full px-3 bg-transparent text-[13px] focus:outline-none"
                   />
@@ -257,21 +262,32 @@ export function useOrderFlow() {
 
             <div className="mt-4 rounded-2xl border border-border bg-secondary/40 p-4 text-left space-y-2">
               <div className="flex justify-between gap-3">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Reference</span>
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Reference
+                </span>
                 <span className="font-display font-bold text-forest-deep text-[13px]">{refId}</span>
               </div>
               <div className="flex justify-between gap-3">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Product</span>
-                <span className="font-semibold text-forest-deep text-[13px] text-right">{productLabel}</span>
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Product
+                </span>
+                <span className="font-semibold text-forest-deep text-[13px] text-right">
+                  {productLabel}
+                </span>
               </div>
               <div className="flex justify-between gap-3">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Customer</span>
-                <span className="font-semibold text-forest-deep text-[13px]">{custName.trim()}</span>
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Customer
+                </span>
+                <span className="font-semibold text-forest-deep text-[13px]">
+                  {custName.trim()}
+                </span>
               </div>
             </div>
 
             <p className="mt-4 text-[12px] text-muted-foreground leading-relaxed">
-              Please continue on WhatsApp to complete your order. Our agricultural specialist will assist you with quantity, delivery details and order confirmation.
+              Please continue on WhatsApp to complete your order. Our agricultural specialist will
+              assist you with quantity, delivery details and order confirmation.
             </p>
 
             <a

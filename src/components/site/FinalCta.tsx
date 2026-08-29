@@ -2,7 +2,10 @@ import { Phone, MessageCircle, Sprout } from "lucide-react";
 
 export function FinalCta() {
   return (
-    <section id="contact" className="bg-forest-gradient text-primary-foreground relative overflow-hidden">
+    <section
+      id="contact"
+      className="bg-forest-gradient text-primary-foreground relative overflow-hidden"
+    >
       <div className="absolute -left-4 -bottom-4 opacity-25 text-gold">
         <Sprout className="size-40" />
       </div>
@@ -24,7 +27,9 @@ export function FinalCta() {
               <Phone className="size-5" />
             </span>
             <span className="text-left leading-tight">
-              <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">Call Now</span>
+              <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">
+                Call Now
+              </span>
               <span className="block">+91 8852003393</span>
             </span>
           </a>
@@ -38,7 +43,9 @@ export function FinalCta() {
               <MessageCircle className="size-5" />
             </span>
             <span className="text-left leading-tight">
-              <span className="block text-[10px] uppercase tracking-wider opacity-80">Send Inquiry</span>
+              <span className="block text-[10px] uppercase tracking-wider opacity-80">
+                Send Inquiry
+              </span>
               <span className="block">on WhatsApp</span>
             </span>
           </a>

@@ -18,7 +18,8 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-4 text-sm opacity-80 leading-relaxed">
-            Organic bio fertilizers, manures, phosphorus products and quality seeds for sustainable farming.
+            Organic bio fertilizers, manures, phosphorus products and quality seeds for sustainable
+            farming.
           </p>
           <div className="mt-5 flex gap-2">
             {[Facebook, Instagram, MessageCircle, Youtube].map((Icon, i) => (
@@ -38,7 +39,11 @@ export function Footer() {
           <h3 className="font-display font-bold text-gold mb-4">Quick Links</h3>
           <ul className="space-y-2 text-sm opacity-85">
             {["Home", "About Us", "Products", "Benefits", "Reviews", "Contact Us"].map((l) => (
-              <li key={l}><a href="#" className="hover:text-gold transition-colors">{l}</a></li>
+              <li key={l}>
+                <a href="#" className="hover:text-gold transition-colors">
+                  {l}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
@@ -46,8 +51,18 @@ export function Footer() {
         <div>
           <h3 className="font-display font-bold text-gold mb-4">Our Products</h3>
           <ul className="space-y-2 text-sm opacity-85">
-            {["Eco Root", "युग्म मोर प्रोम", "RAJ Organic Seeds", "Fertilizers", "Organic Manures"].map((l) => (
-              <li key={l}><a href="#products" className="hover:text-gold transition-colors">{l}</a></li>
+            {[
+              "Eco Root",
+              "युग्म मोर प्रोम",
+              "RAJ Organic Seeds",
+              "Fertilizers",
+              "Organic Manures",
+            ].map((l) => (
+              <li key={l}>
+                <a href="#products" className="hover:text-gold transition-colors">
+                  {l}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
